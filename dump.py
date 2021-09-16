@@ -6,7 +6,7 @@ save_media = '1'   # set save_media = '' will not save response body separately
 
 dumpfile = "E:\\mitm\\flow_" + timestamp + ".dump"
 media_save_path = "E:\\mitm\\media_dump_" + timestamp
-url_keyword = "88888888"   # set url_keyword to dump specified requests
+url_keyword = "88888888"   # set url_keyword to dump specified requests /PLTV/88888888/224/3221222222/....
 
 def request(flow):
     if -1 == flow.request.url.find(url_keyword):
@@ -35,7 +35,9 @@ def response(flow):
         for k, v in flow.response.headers.items():
             header_str = "%s: %s\n" %(k,v)
             f.write(header_str.encode())
-        f.write(flow.response.content)
+        #save manifest to dumpfile only
+        if -1 != flow.request.url.find(".m3u8"):
+            f.write(flow.response.content)
         f.write(b'\n')
     f.closed
     
@@ -48,7 +50,3 @@ def response(flow):
 
 if save_media and not os.path.exists(media_save_path):
     os.makedirs(media_save_path)
-
-
-
-
